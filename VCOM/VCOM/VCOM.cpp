@@ -10,24 +10,6 @@
 using namespace cv;
 using namespace std;
 
-//Global variables
-
-Ptr<FeatureDetector> detector;
-
-vector<KeyPoint> keypoints;
-
-Ptr<DescriptorExtractor> extractor;
-
-Mat descriptors;
-Mat training_descriptors;
-Mat dictionary;
-
-vector<vector<KeyPoint>> results;
-
-Ptr<DescriptorMatcher> matcher;
-
-//-------------------------------------------
-
 
 string convertInt(int number)
 {
@@ -50,41 +32,46 @@ bool openImage(const string &f, Mat &image, int mode)
 	return true;
 }
 
-void initialize()
-{
-	//verficar se existem dados em memória e ler do ficheiro
-	int d,m;
-	Mat training_descriptors(1,extractor->descriptorSize(),extractor->descriptorType());
 
+int main( int argc, char** argv ) 
+{
+	vector<KeyPoint> keypoints;
+	Mat descriptors;
+	Mat dictionary;
+	vector<vector<KeyPoint>> results;
+	int d,m;
+	Ptr<DescriptorExtractor > extractor;
+	Ptr<FeatureDetector> detector;
+
+	//verficar se existem dados em memória e ler do ficheiro
+	
 	cout<<"Insert the number corresponding to the desired FeatureDetector algorithm:"<<endl<<"1 - SIFT"<<endl<<"2 - SURF"<<endl; 
 	cin>>d;
 	cout<<"Insert the number corresponding to the desired DescriptorMatcher algorithm:"<<endl<<"1 - FlannBased"<<endl<<"2 - BruteForce"<<endl;
 	cin>>m;
 	
-	string det;
+	
+	
 	if(d==1)
-		det="SIFT";
-	else det="SURF";
-
-	detector = FeatureDetector::create(det);
-	extractor = DescriptorExtractor::create(det);
+	{
+		extractor=Ptr<DescriptorExtractor>(new SiftDescriptorExtractor());
+		detector = FeatureDetector::create("SIFT");
+	}
+	else 
+	{
+		extractor=Ptr<DescriptorExtractor>(new SurfDescriptorExtractor());
+		detector = FeatureDetector::create("SURF");
+	}
 
 	string mat;
 	if(m==1)
 		mat="FlannBased";
 	else
 		mat="BruteForce";
-	
-	matcher = DescriptorMatcher::create(mat);
-}
 
+	Mat training_descriptors(1,extractor->descriptorSize(),extractor->descriptorType());	
+	Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create(mat);
 
-
-int main( int argc, char** argv ) 
-{
-	//Ask the user which algorithms are to be used and then initialize the respective variables
-	initialize();
-    
 	//Initial training and clustering
 	try
 	{
@@ -92,6 +79,7 @@ int main( int argc, char** argv )
 		ifstream infile("C:\\Dataset\\cars_test.txt");
 		string line;
 		Mat image;
+		int i=0;
 		
 		while(getline(infile,line))
 		{
@@ -102,6 +90,8 @@ int main( int argc, char** argv )
 			detector->detect(image,keypoints);
 			extractor->compute(image,keypoints,descriptors);    
 			training_descriptors.push_back(descriptors);
+			cout<<i<<endl;
+			i++;
 		}
 
 		cout<<"Total descriptors: "<<training_descriptors.rows<<endl;
@@ -128,8 +118,8 @@ int main( int argc, char** argv )
 	
 	//trainSVM();
 	
-	http://stackoverflow.com/questions/13689666/how-to-train-and-predict-using-bag-of-words
-	http://www.morethantechnical.com/2011/08/25/a-simple-object-classifier-with-bag-of-words-using-opencv-2-3-w-code/
+	//http://stackoverflow.com/questions/13689666/how-to-train-and-predict-using-bag-of-words
+	//http://www.morethantechnical.com/2011/08/25/a-simple-object-classifier-with-bag-of-words-using-opencv-2-3-w-code/
 	
 	return 0; 
 }
