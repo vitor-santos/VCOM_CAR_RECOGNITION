@@ -178,10 +178,10 @@ int main( int argc, char** argv )
 
 				for (int j = 0 ; j < keypointsAll.size() ; j++)
 				{
-					cout<<"Position: "<<(int)keypointsAll[j].pt.x <<" "<<(int)keypointsAll[j].pt.y<<endl;
-					cout<<"Mask: "<<(uchar)imageMask.at<uchar>((int)keypointsAll[j].pt.x, (int)keypointsAll[j].pt.y)<<endl;
+					cout<<"Position: "<<(int)keypointsAll[j].pt.y <<" "<<(int)keypointsAll[j].pt.x<<endl;
+					cout<<"Mask: "<<(int)imageMask.at<uchar>((int)keypointsAll[j].pt.y, (int)keypointsAll[j].pt.x)<<endl;
 					//add to keypoints that are car
-					if((uchar)imageMask.at<uchar>((int)keypointsAll[j].pt.x, (int)keypointsAll[j].pt.y) != 0)
+					if((uchar)imageMask.at<uchar>((int)keypointsAll[j].pt.y, (int)keypointsAll[j].pt.x) != 0)
 						keypointsCar.push_back(keypointsAll[j]);
 					//add to keypoints that aren't car
 					else
