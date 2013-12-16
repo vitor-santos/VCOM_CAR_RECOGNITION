@@ -94,7 +94,7 @@ Mat class_label;
 
 CvSVM SVMClassifier;
 
-float windowProportion = 3.0;
+float windowProportion = 5.0;
 
 int truePositives = 0;
 int undetectedPixels = 0;
@@ -291,7 +291,7 @@ int main( int argc, char** argv )
 				labels.push_back(class_label);
 				samples.push_back(response_hist);
 				
-				if(i==0)
+				/*if(i==0)
 				{
 					drawKeypoints(image, keypointsAll, tmpImage);
 					imshow("All Keypoints",tmpImage);
@@ -300,9 +300,9 @@ int main( int argc, char** argv )
 					drawKeypoints(image, keypointsNotCar, tmpImage);
 					imshow("Outside Car Keypoints",tmpImage);
 					cout<<"Waiting for Key"<<endl;
-					//waitKey(0);
+					waitKey(0);
 					cout<<"Continuing"<<endl;
-				}
+				}*/
 				if(i%10 == 0)
 				{
 					cout<<"Reading Image: "<<line<<"\nImage number: "<<i<<endl;
@@ -332,7 +332,7 @@ int main( int argc, char** argv )
 			openImage(line,image,1);
 			numberTestImages++;
 
-			imshow("All Image", image);
+			//imshow("All Image", image);
 
 			Mat mask = Mat::zeros(image.rows, image.cols, CV_8U);
 			tmpImage = Mat::zeros(image.rows, image.cols, image.type());
@@ -342,7 +342,7 @@ int main( int argc, char** argv )
 				for(int j = 0 ; j < (windowProportion * 2) -1 ; j++)
 				{
 					Mat dst_roi = image(Rect(i*image.cols*(1.0/(windowProportion*2.0)), j*image.rows*(1.0/(windowProportion*2.0)), (1.0/windowProportion)*image.cols, (1.0/windowProportion)*image.rows));
-					imshow("Patch", dst_roi);
+					//imshow("Patch", dst_roi);
 					//waitKey(0);
 					featureDetector->detect(dst_roi,keypointsAll);
 					if(keypointsAll.size() !=0)
@@ -362,7 +362,7 @@ int main( int argc, char** argv )
 
 			//getting subwindows and testing there
 			cout<<"Image: " + line<<endl;
-			imshow("Current Prediction",tmpImage);
+			//imshow("Current Prediction",tmpImage);
 			//cout<<"Waiting for Key"<<endl;
 			//waitKey(0);
 			string savefilename= DATA_DIRECTORY + "results\\" + line + "_f" + convertInt(detectorInput) + "m" + convertInt(matcherInput) + "w" + convertInt(NUM_WORDS) + "d" + convertInt(windowProportion) + ".png";
@@ -416,7 +416,7 @@ int main( int argc, char** argv )
 		cout<<"All Testing Images Read"<<endl;
 		cout<<"Calculating Statistics"<<endl;
 
-		string statisticsFilename= DATA_DIRECTORY + "results\\f" + convertInt(detectorInput) + "m" + convertInt(matcherInput) + "w" + convertInt(NUM_WORDS) + "d" + convertInt(windowProportion) + ".txt";
+		string statisticsFilename= DATA_DIRECTORY + "results\\logs\\f" + convertInt(detectorInput) + "m" + convertInt(matcherInput) + "w" + convertInt(NUM_WORDS) + "d" + convertInt(windowProportion) + ".txt";
 		ofstream myfile;
 		myfile.open (statisticsFilename);
 		myfile << "Sucess: " <<sucess/numberTestImages<<endl;
@@ -431,10 +431,7 @@ int main( int argc, char** argv )
 	}
 
 	cout<<"Waiting for Key"<<endl;
-	waitKey(0);
-
-	//http://stackoverflow.com/questions/13689666/how-to-train-and-predict-using-bag-of-words
-	//http://www.morethantechnical.com/2011/08/25/a-simple-object-classifier-with-bag-of-words-using-opencv-2-3-w-code/
+	//waitKey(0);
 
 	return 0; 
 }
